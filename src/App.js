@@ -6,10 +6,12 @@ function App() {
     {
       id: 1,
       title: "Task 1",
+      isEditing: false,
     },
     {
       id: 2,
       title: "Task 2",
+      isEditing: false,
     },
   ]);
 
@@ -21,13 +23,41 @@ function App() {
     const newTask = {
       id: Date.now(),
       title: newTaskTitle,
+      isEditing: false,
     };
-    setTasks(...tasks, newTask);
+    setTasks([...tasks, newTask]);
     setNewTaskTitle("");
   };
 
   const deleteTask = (id) => {
     setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const toggleEditTask = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              isEditing: !task.isEditing,
+            }
+          : task
+      )
+    );
+  };
+
+  const updateTaskTitle = (id, newTitle) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              title: newTitle,
+              isEditing: false,
+            }
+          : task
+      )
+    );
   };
 
   return (
@@ -39,7 +69,12 @@ function App() {
         onChange={(e) => setNewTaskTitle(e.target.value)}
       />
       <button onClick={addTask}>Add</button>
-      <TaskList tasks={tasks} onDelete={deleteTask} />
+      <TaskList
+        tasks={tasks}
+        onDelete={deleteTask}
+        onToggleEdit={toggleEditTask}
+        onUpdateTask={updateTaskTitle}
+      />
     </div>
   );
 }
